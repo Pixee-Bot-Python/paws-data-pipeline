@@ -1,5 +1,7 @@
 import pytest, socket, requests, os
 import structlog
+from security import safe_requests
+
 logger = structlog.get_logger()
 
 try:
@@ -86,7 +88,7 @@ def test_client_dns():
 # Simple API tests  ################################################
 def test_usertest():
     """Verify liveness test works"""
-    response = requests.get(SERVER_URL + "/api/user/test", timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/user/test", timeout=60)
     assert response.status_code == 200
 
 ########   Dependent tests   #################################
@@ -129,7 +131,7 @@ def test_useraccess(state: State):
     assert len(b_string) > 24
 
     auth_hdr = {'Authorization' : b_string}
-    response = requests.get(SERVER_URL + "/api/user/test_auth", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/user/test_auth", headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
 
@@ -176,7 +178,7 @@ def test_admingetusers(state: State):
     assert len(b_string) > 24
 
     auth_hdr = {'Authorization' : b_string}
-    response = requests.get(SERVER_URL + "/api/admin/user/get_users", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/admin/user/get_users", headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
     userlist = response.json()
@@ -220,7 +222,7 @@ def test_admin_currentFiles(state: State):
     assert len(b_string) > 24
     auth_hdr = {'Authorization' : b_string}
 
-    response = requests.get(SERVER_URL + "/api/listCurrentFiles",  headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/listCurrentFiles",  headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
 
@@ -231,7 +233,7 @@ def test_admin_statistics(state: State):
     assert len(b_string) > 24
     auth_hdr = {'Authorization' : b_string}
 
-    response = requests.get(SERVER_URL + "/api/statistics", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/statistics", headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
 
@@ -243,7 +245,7 @@ def test_usergetusers(state: State):
     assert len(b_string) > 24
 
     auth_hdr = {'Authorization' : b_string}
-    response = requests.get(SERVER_URL + "/api/admin/user/get_users", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/admin/user/get_users", headers=auth_hdr, timeout=60)
     assert response.status_code == 403
 
 
@@ -254,7 +256,7 @@ def test_currentFiles(state: State):
     assert len(b_string) > 24
     auth_hdr = {'Authorization' : b_string}
 
-    response = requests.get(SERVER_URL + "/api/listCurrentFiles", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/listCurrentFiles", headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
 
@@ -265,7 +267,7 @@ def test_statistics(state: State):
     assert len(b_string) > 24
     auth_hdr = {'Authorization' : b_string}
     
-    response = requests.get(SERVER_URL + "/api/statistics", headers=auth_hdr, timeout=60)
+    response = safe_requests.get(SERVER_URL + "/api/statistics", headers=auth_hdr, timeout=60)
     assert response.status_code == 200
 
 
@@ -286,7 +288,7 @@ def test_user_get_person_animal_events(state: State):
     url = SERVER_URL + "/api/person/12345/animal/12345/events"
 
     try:
-        response = requests.get(url, headers = auth_hdr, timeout=60)
+        response = safe_requests.get(url, headers = auth_hdr, timeout=60)
     except Exception as err:
         logger.error(err)
     else:
@@ -310,7 +312,7 @@ def test_user_get_animals(state: State):
     url = SERVER_URL + "/api/person/12345/animals"
 
     try:
-        response = requests.get(url, headers = auth_hdr, timeout=60)
+        response = safe_requests.get(url, headers = auth_hdr, timeout=60)
     except Exception as err:
         logger.error(err)
     else:
@@ -339,7 +341,7 @@ def test_user_get_animals_sl_token(state: State):
     url = SERVER_URL + "/api/person/12345/animals"
 
     try:
-        response = requests.get(url, headers = auth_hdr, timeout=60)
+        response = safe_requests.get(url, headers = auth_hdr, timeout=60)
     except Exception as err:
         logger.error(err)
         pytest.fail('test_user_get_animals_sl_token - Request failed', pytrace=False)
@@ -365,7 +367,7 @@ def test_user_get_person_animal_events_sl_token(state: State):
     url = SERVER_URL + "/api/person/12345/animal/12345/events"
 
     try:
-        response = requests.get(url, headers = auth_hdr, timeout=60)
+        response = safe_requests.get(url, headers = auth_hdr, timeout=60)
     except Exception as err:
         logger.error(err)
         pytest.fail('test_user_get_person_animal_events_sl_token - Request failed', pytrace=False)
