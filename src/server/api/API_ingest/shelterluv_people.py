@@ -1,8 +1,10 @@
-import requests, os
+import os
 from models import ShelterluvPeople
 from config import engine
 from sqlalchemy.orm import  sessionmaker
 import structlog
+from security import safe_requests
+
 logger = structlog.get_logger()
 
 try:
@@ -50,7 +52,7 @@ def store_shelterluv_people_all():
         logger.debug("Start getting shelterluv contacts from people table")
 
         while has_more:
-            r = requests.get("http://shelterluv.com/api/v1/people?limit={}&offset={}".format(LIMIT, offset),
+            r = safe_requests.get("http://shelterluv.com/api/v1/people?limit={}&offset={}".format(LIMIT, offset),
                              headers={"x-api-key": SHELTERLUV_SECRET_TOKEN}, timeout=60)
             response = r.json()
             for person in response["people"]:

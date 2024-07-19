@@ -20,3 +20,4 @@ cryptography
 grpcio
 google-api-python-client
 avro
+security==1.3.0
